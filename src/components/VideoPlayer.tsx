@@ -1,14 +1,21 @@
 "use client";
 import { useEffect, useRef } from "react";
-import type { Video } from "@/lib/types";
+import type { Video, Comment } from "@/lib/types";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("fr-FR", {
-    day: "numeric", month: "long", year: "numeric"
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   });
 }
 
-export default function VideoPlayer({ video }: { video: Video }) {
+interface VideoPlayerProps {
+  video: Video;
+  comments?: Comment[];
+}
+
+export default function VideoPlayer({ video }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -32,9 +39,11 @@ export default function VideoPlayer({ video }: { video: Video }) {
         <div className="video-info-meta">
           <div className="video-uploader">
             <div className="avatar" style={{ width: 26, height: 26, fontSize: 11 }}>
-              {video.uploader_avatar
-                ? <img src={video.uploader_avatar} alt={video.uploader_name ?? ""} />
-                : (video.uploader_name?.[0] ?? "A")}
+              {video.uploader_avatar ? (
+                <img src={video.uploader_avatar} alt={video.uploader_name ?? ""} />
+              ) : (
+                video.uploader_name?.[0] ?? "A"
+              )}
             </div>
             <span>{video.uploader_name ?? "Anonyme"}</span>
           </div>
@@ -42,10 +51,14 @@ export default function VideoPlayer({ video }: { video: Video }) {
           <span>{formatDate(video.created_at)}</span>
         </div>
         {video.description && (
-          <p style={{
-            marginTop: 14, fontSize: 14,
-            color: "var(--color-text-muted)", lineHeight: 1.7
-          }}>
+          <p
+            style={{
+              marginTop: 14,
+              fontSize: 14,
+              color: "var(--color-text-muted)",
+              lineHeight: 1.7,
+            }}
+          >
             {video.description}
           </p>
         )}
