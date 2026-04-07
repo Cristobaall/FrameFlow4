@@ -16,7 +16,7 @@ export default function Header({ user }: { user: User | null }) {
         }}
       >
         <img
-          src="/logo-frameflow.png"
+          src="/logo-frameflow.png?v=1"
           alt="FrameFlow"
           style={{
             display: "block",
