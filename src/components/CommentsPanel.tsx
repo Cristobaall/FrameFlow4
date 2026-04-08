@@ -185,7 +185,7 @@ export default function CommentsPanel({ video, initialComments, user }: {
             </svg>
             Timecode : <strong>{formatTimecode(currentTime)}</strong>
             <span style={{ color: "var(--color-text-faint)", fontSize: 11 }}>
-              ()
+              
             </span>
           </div>
           <textarea
