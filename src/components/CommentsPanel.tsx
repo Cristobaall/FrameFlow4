@@ -185,7 +185,7 @@ export default function CommentsPanel({ video, initialComments, user }: {
             </svg>
             Timecode : <strong>{formatTimecode(currentTime)}</strong>
             <span style={{ color: "var(--color-text-faint)", fontSize: 11 }}>
-              (mets en pause puis commente)
+              ()
             </span>
           </div>
           <textarea
@@ -201,7 +201,7 @@ export default function CommentsPanel({ video, initialComments, user }: {
           />
           <div className="comment-form-footer">
             <span style={{ fontSize: 11, color: "var(--color-text-faint)" }}>
-              Cmd+Entrée pour envoyer
+              
             </span>
             <button
               className="btn btn-primary btn-sm"
