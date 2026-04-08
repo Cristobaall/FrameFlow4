@@ -24,7 +24,7 @@ export async function getUploadUrl(fileName: string, fileType: string, fileSize:
 }
 
 export async function saveVideo(data: {
-  title: string; description?: string; r2Key: string; duration?: number;
+  title: string; description?: string; r2Key: string; duration?: number; fileSize?: number;
 }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -37,6 +37,7 @@ export async function saveVideo(data: {
     r2_key: data.r2Key,
     public_url: publicUrl,
     duration: data.duration ?? null,
+    file_size: data.fileSize ?? null,
     uploader_id: user.id,
     uploader_name: user.user_metadata?.full_name ?? user.email,
     uploader_avatar: user.user_metadata?.avatar_url ?? null,

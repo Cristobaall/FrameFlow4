@@ -6,6 +6,7 @@ export interface Video {
   public_url: string;
   thumbnail_url: string | null;
   duration: number | null;
+  file_size: number | null;
   uploader_id: string;
   uploader_name: string | null;
   uploader_avatar: string | null;

@@ -50,7 +50,7 @@ export default function UploadButton() {
         v.onerror = () => resolve(0);
       });
       setStatus("saving");
-      await saveVideo({ title: title.trim(), description: desc.trim() || undefined, r2Key: key, duration });
+      await saveVideo({ title: title.trim(), description: desc.trim() || undefined, r2Key: key, duration, fileSize: file.size });
       setStatus("done");
       setTimeout(() => { setOpen(false); reset(); router.refresh(); }, 1200);
     } catch (e) {
