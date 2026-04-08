@@ -15,6 +15,7 @@ export default function CommentsPanel({ video, initialComments, user }: {
   video: Video; initialComments: Comment[]; user: User | null;
 }) {
   const [comments, setComments] = useState<Comment[]>(initialComments);
+  const [checked, setChecked] = useState<Set<string>>(new Set());
   const [text, setText] = useState("");
   const [currentTime, setCurrentTime] = useState(0);
   const [isPending, startTransition] = useTransition();
@@ -56,6 +57,15 @@ export default function CommentsPanel({ video, initialComments, user }: {
     if (vid) { vid.currentTime = timecode; vid.play(); }
   };
 
+  const toggleCheck = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setChecked(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
   const handleSubmit = () => {
     if (!text.trim() || !user) return;
     const content = text.trim();
@@ -72,13 +82,26 @@ export default function CommentsPanel({ video, initialComments, user }: {
     });
   };
 
+  const doneCount = checked.size;
+
   return (
     <div className="comments-panel">
       <div className="comments-header">
         <span>Commentaires ({comments.length})</span>
-        <span style={{ fontSize: 12, color: "var(--color-text-faint)", fontWeight: 400 }}>
-          clic = aller au timecode
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {doneCount > 0 && (
+            <span style={{
+              fontSize: 11, color: "var(--color-success)",
+              background: "rgba(34,197,94,0.12)",
+              padding: "2px 8px", borderRadius: 999, fontWeight: 600
+            }}>
+              {doneCount} effectué{doneCount > 1 ? "s" : ""}
+            </span>
+          )}
+          <span style={{ fontSize: 12, color: "var(--color-text-faint)", fontWeight: 400 }}>
+            
+          </span>
+        </div>
       </div>
       <div className="comments-list">
         {comments.length === 0 ? (
@@ -88,41 +111,69 @@ export default function CommentsPanel({ video, initialComments, user }: {
           }}>
             Aucun commentaire.<br />Sois le premier !
           </div>
-        ) : comments.map((c) => (
-          <div key={c.id} className="comment-item"
-            onClick={() => seekTo(c.timecode)}
-            title={`Aller a ${formatTimecode(c.timecode)}`}>
-            <div className="comment-header">
-              <span className="comment-timecode">{formatTimecode(c.timecode)}</span>
-              <div className="avatar" style={{ width: 22, height: 22, fontSize: 10 }}>
-                {c.user_avatar
-                  ? <img src={c.user_avatar} alt={c.user_name ?? ""} />
-                  : (c.user_name?.[0] ?? "U")}
-              </div>
-              <span className="comment-user">{c.user_name ?? "Anonyme"}</span>
-              <span className="comment-date">
-                {new Date(c.created_at).toLocaleDateString("fr-FR", {
-                  day: "numeric", month: "short"
-                })}
-              </span>
-              {user?.id === c.user_id && (
+        ) : comments.map((c) => {
+          const isDone = checked.has(c.id);
+          return (
+            <div key={c.id} className="comment-item"
+              onClick={() => seekTo(c.timecode)}
+              title={`Aller a ${formatTimecode(c.timecode)}`}
+              style={{ opacity: isDone ? 0.5 : 1, transition: "opacity 0.2s" }}>
+              <div className="comment-header">
+                {/* Checkbox */}
                 <button
-                  className="btn-icon comment-delete btn-sm"
-                  style={{ width: 24, height: 24 }}
-                  onClick={(e) => { e.stopPropagation(); handleDelete(c.id); }}
-                  aria-label="Supprimer">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" strokeWidth="2">
-                    <polyline points="3 6 5 6 21 6"/>
-                    <path d="M19 6l-1 14H6L5 6"/>
-                    <path d="M9 6V4h6v2"/>
-                  </svg>
+                  onClick={(e) => toggleCheck(c.id, e)}
+                  title={isDone ? "Marquer comme non effectué" : "Marquer comme effectué"}
+                  style={{
+                    width: 18, height: 18, borderRadius: 4, flexShrink: 0,
+                    border: `2px solid ${isDone ? "var(--color-success)" : "var(--color-border)"}`,
+                    background: isDone ? "var(--color-success)" : "transparent",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.15s", cursor: "pointer",
+                  }}>
+                  {isDone && (
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                      stroke="#fff" strokeWidth="3.5">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  )}
                 </button>
-              )}
+
+                <span className="comment-timecode">{formatTimecode(c.timecode)}</span>
+                <div className="avatar" style={{ width: 22, height: 22, fontSize: 10 }}>
+                  {c.user_avatar
+                    ? <img src={c.user_avatar} alt={c.user_name ?? ""} />
+                    : (c.user_name?.[0] ?? "U")}
+                </div>
+                <span className="comment-user">{c.user_name ?? "Anonyme"}</span>
+                <span className="comment-date">
+                  {new Date(c.created_at).toLocaleDateString("fr-FR", {
+                    day: "numeric", month: "short"
+                  })}
+                </span>
+                {user?.id === c.user_id && (
+                  <button
+                    className="btn-icon comment-delete btn-sm"
+                    style={{ width: 24, height: 24 }}
+                    onClick={(e) => { e.stopPropagation(); handleDelete(c.id); }}
+                    aria-label="Supprimer">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14H6L5 6"/>
+                      <path d="M9 6V4h6v2"/>
+                    </svg>
+                  </button>
+                )}
+              </div>
+              <p className="comment-text" style={{
+                textDecoration: isDone ? "line-through" : "none",
+                color: isDone ? "var(--color-text-faint)" : undefined
+              }}>
+                {c.content}
+              </p>
             </div>
-            <p className="comment-text">{c.content}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
       {user ? (
         <div className="comment-form">
