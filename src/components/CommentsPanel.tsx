@@ -149,7 +149,7 @@ export default function CommentsPanel({ video, initialComments, user }: {
                 {user && (
                   <button
                     className="btn-icon btn-sm"
-                    style={{ width: 24, height: 24, opacity: 1, color: "var(--color-error)" }}
+                    style={{ width: 42, height: 37, opacity: 1, color: "var(--color-error)", flexShrink: 0 }}
                     onClick={(e) => { e.stopPropagation(); handleDelete(c.id); }}
                     aria-label="Supprimer">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
