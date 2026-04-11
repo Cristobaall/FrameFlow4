@@ -98,9 +98,6 @@ export default function CommentsPanel({ video, initialComments, user }: {
               {doneCount} effectué{doneCount > 1 ? "s" : ""}
             </span>
           )}
-          <span style={{ fontSize: 12, color: "var(--color-text-faint)", fontWeight: 400 }}>
-            
-          </span>
         </div>
       </div>
       <div className="comments-list">
@@ -119,7 +116,6 @@ export default function CommentsPanel({ video, initialComments, user }: {
               title={`Aller a ${formatTimecode(c.timecode)}`}
               style={{ opacity: isDone ? 0.5 : 1, transition: "opacity 0.2s" }}>
               <div className="comment-header">
-                {/* Checkbox */}
                 <button
                   onClick={(e) => toggleCheck(c.id, e)}
                   title={isDone ? "Marquer comme non effectué" : "Marquer comme effectué"}
@@ -141,7 +137,7 @@ export default function CommentsPanel({ video, initialComments, user }: {
                 <span className="comment-timecode">{formatTimecode(c.timecode)}</span>
                 <div className="avatar" style={{ width: 22, height: 22, fontSize: 10 }}>
                   {c.user_avatar
-                    ? <img src={c.user_avatar} alt={c.user_name ?? ""} />
+                    ? <img src={c.user_avatar} alt={c.user_name ?? ""} referrerPolicy="no-referrer" />
                     : (c.user_name?.[0] ?? "U")}
                 </div>
                 <span className="comment-user">{c.user_name ?? "Anonyme"}</span>
@@ -150,10 +146,10 @@ export default function CommentsPanel({ video, initialComments, user }: {
                     day: "numeric", month: "short"
                   })}
                 </span>
-                {user?.id === c.user_id && (
+                {user && (
                   <button
-                    className="btn-icon comment-delete btn-sm"
-                    style={{ width: 24, height: 24 }}
+                    className="btn-icon btn-sm"
+                    style={{ width: 24, height: 24, opacity: 1, color: "var(--color-error)" }}
                     onClick={(e) => { e.stopPropagation(); handleDelete(c.id); }}
                     aria-label="Supprimer">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
@@ -184,9 +180,6 @@ export default function CommentsPanel({ video, initialComments, user }: {
               <polyline points="12 6 12 12 16 14"/>
             </svg>
             Timecode : <strong>{formatTimecode(currentTime)}</strong>
-            <span style={{ color: "var(--color-text-faint)", fontSize: 11 }}>
-              
-            </span>
           </div>
           <textarea
             ref={textareaRef}
@@ -201,7 +194,7 @@ export default function CommentsPanel({ video, initialComments, user }: {
           />
           <div className="comment-form-footer">
             <span style={{ fontSize: 11, color: "var(--color-text-faint)" }}>
-              
+              Shift+Entrée pour aller à la ligne
             </span>
             <button
               className="btn btn-primary btn-sm"

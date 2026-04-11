@@ -61,7 +61,7 @@ export default function StorageManager({ videos, user }: Props) {
                   width: 48, height: 48,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 22,
-                }}>💾</div>
+                }}></div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 20, color: "#fff" }}>Gestion du Stockage</div>
                   <div style={{ fontSize: 11, color: "#888", letterSpacing: 1, marginTop: 2 }}>

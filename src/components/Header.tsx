@@ -23,7 +23,7 @@ export default function Header({ user }: { user: User | null }) {
           <>
             <div className="avatar">
               {user.user_metadata?.avatar_url ? (
-                <img src={user.user_metadata.avatar_url} alt={user.user_metadata.full_name ?? "User"} />
+                <img src={user.user_metadata.avatar_url} alt={user.user_metadata.full_name ?? "User"} referrerPolicy="no-referrer" />
               ) : (
                 user.user_metadata?.full_name?.[0] ?? "U"
               )}
