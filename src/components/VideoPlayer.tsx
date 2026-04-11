@@ -177,20 +177,26 @@ export default function VideoPlayer({ video }: VideoPlayerProps) {
             opacity: showControls || !playing ? 1 : 0,
           }}
         >
-          {/* Progress bar */}
+          {/* Progress bar — zone cliquable large */}
           <div
             ref={progressRef}
             onClick={handleProgress}
             style={{
-              height: 4, background: "rgba(255,255,255,0.3)",
-              borderRadius: 999, marginBottom: 12, cursor: "pointer",
-              position: "relative",
+              height: 20, background: "transparent",
+              borderRadius: 999, marginBottom: 8, cursor: "pointer",
+              position: "relative", display: "flex", alignItems: "center",
             }}
           >
+            {/* Piste de fond */}
             <div style={{
-              width: `${progress}%`, height: "100%",
+              position: "absolute", left: 0, right: 0,
+              height: 4, background: "rgba(255,255,255,0.3)", borderRadius: 999,
+            }} />
+            {/* Progression */}
+            <div style={{
+              position: "absolute", left: 0,
+              width: `${progress}%`, height: 4,
               background: "var(--color-primary)", borderRadius: 999,
-              position: "relative",
             }}>
               <div style={{
                 position: "absolute", right: -6, top: "50%",
