@@ -76,7 +76,7 @@ export default function StorageManager({ videos, user }: Props) {
             </div>
 
             {/* Liste des vidéos */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24, maxHeight: 320, overflowY: "auto", paddingRight: 4 }}>
               {videos.map(video => (
                 <div key={video.id} style={{
                   background: "#111", borderRadius: 12, padding: "14px 16px",
