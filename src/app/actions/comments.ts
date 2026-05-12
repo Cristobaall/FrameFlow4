@@ -31,3 +31,16 @@ export async function deleteComment(commentId: string, videoId: string) {
   if (error) throw new Error(error.message);
   revalidatePath(`/video/${videoId}`);
 }
+
+export async function toggleCommentCheck(commentId: string, isChecked: boolean) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Non authentifie");
+
+  const { error } = await supabase
+    .from("comments")
+    .update({ is_checked: isChecked })
+    .eq("id", commentId);
+
+  if (error) throw new Error(error.message);
+}

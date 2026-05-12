@@ -23,4 +23,5 @@ export interface Comment {
   content: string;
   timecode: number;
   created_at: string;
+  is_checked: boolean;
 }

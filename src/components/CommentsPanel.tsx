@@ -2,7 +2,7 @@
 import { useState, useEffect, useTransition, useRef } from "react";
 import type { Video, Comment } from "@/lib/types";
 import type { User } from "@supabase/supabase-js";
-import { addComment, deleteComment } from "@/app/actions/comments";
+import { addComment, deleteComment, toggleCommentCheck } from "@/app/actions/comments";
 import { createClient } from "@/lib/supabase/client";
 import { signInWithGoogle } from "@/app/actions/auth";
 
@@ -15,7 +15,9 @@ export default function CommentsPanel({ video, initialComments, user }: {
   video: Video; initialComments: Comment[]; user: User | null;
 }) {
   const [comments, setComments] = useState<Comment[]>(initialComments);
-  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [checked, setChecked] = useState<Set<string>>(
+    new Set(initialComments.filter(c => c.is_checked).map(c => c.id))
+  );
   const [text, setText] = useState("");
   const [currentTime, setCurrentTime] = useState(0);
   const [isPending, startTransition] = useTransition();
@@ -48,6 +50,18 @@ export default function CommentsPanel({ video, initialComments, user }: {
       }, (payload) => {
         setComments((prev) => prev.filter(c => c.id !== payload.old.id));
       })
+      .on("postgres_changes", {
+        event: "UPDATE", schema: "public", table: "comments",
+        filter: `video_id=eq.${video.id}`
+      }, (payload) => {
+        const updated = payload.new as Comment;
+        setComments(prev => prev.map(c => c.id === updated.id ? updated : c));
+        setChecked(prev => {
+          const next = new Set(prev);
+          updated.is_checked ? next.add(updated.id) : next.delete(updated.id);
+          return next;
+        });
+      })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [video.id]);
@@ -59,10 +73,14 @@ export default function CommentsPanel({ video, initialComments, user }: {
 
   const toggleCheck = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    const willBeChecked = !checked.has(id);
     setChecked(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      willBeChecked ? next.add(id) : next.delete(id);
       return next;
+    });
+    startTransition(async () => {
+      await toggleCommentCheck(id, willBeChecked);
     });
   };
 
